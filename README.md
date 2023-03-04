@@ -1,7 +1,4 @@
-# Xtreos Bot
-My bot B)
-
-## Start
-npm run start
-
-also look at my [site](https://chriz.cf)
+# Xtreos
+*X marks the bot ;)* <br>
+A bot used for Chriz's Ocean and testing purposes
+> Also check out my site [chriz.cf](https://chriz.cf) :D

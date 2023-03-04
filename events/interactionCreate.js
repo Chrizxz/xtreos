@@ -3,7 +3,7 @@ const client = require("../server.js");
 client.on("interactionCreate", async (interaction) => {
   // Slash Command Handling
   if (interaction.isCommand()) {
-    await interaction.deferReply().catch(() => {});
+    // await interaction.deferReply().catch(() => {}); // THIS IS DEFERREPLY FOR SLASH COMMANDS
 
     const cmd = client.slashCommands.get(interaction.commandName);
     if (!cmd)
@@ -22,6 +22,9 @@ client.on("interactionCreate", async (interaction) => {
         });
       } else if (option.value) args.push(option.value);
     }
+    // if (interaction.guild) {
+    //   interaction.member = interaction.guild.members.cache.get(interaction.user.id);
+    // }    
     interaction.member = interaction.guild.members.cache.get(
       interaction.user.id
     );
@@ -42,7 +45,9 @@ client.on("interactionCreate", async (interaction) => {
 
   // Context Menu Handling
   if (interaction.isContextMenu()) {
-    await interaction.deferReply({ephemeral: true});
+
+    // await interaction.deferReply({ephemeral: true}); // THIS IS DEFERREPLY FOR CONTEXT MENU
+
     const command = client.slashCommands.get(interaction.commandName);
     if (command) command.run(client, interaction);
   }

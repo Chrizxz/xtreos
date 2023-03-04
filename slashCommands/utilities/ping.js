@@ -13,6 +13,7 @@ module.exports = {
    * @param {String[]} args
    */
   run: async (client, interaction, args) => {
+    await interaction.deferReply().catch(() => {});
     interaction.followUp("Pinging...");
     const reply = await interaction.fetchReply();
     const embed = new MessageEmbed()

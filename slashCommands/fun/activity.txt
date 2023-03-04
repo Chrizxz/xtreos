@@ -91,7 +91,7 @@ module.exports = {
    *
    */
   run: async (client, interaction, args) => {
-    //const [channelID] = args[1];
+    await interaction.deferReply().catch(() => {});
     const channelID = interaction.options.getChannel("channel").id;
     const channel = interaction.options.getChannel("channel");
     //const channel = interaction.guild.channels.cache.get(channelID);

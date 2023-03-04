@@ -1,9 +1,10 @@
 const { Client, ContextMenuInteraction, MessageEmbed } = require("discord.js");
 const botName = require("./../../config.json").botName;
-const footer = require("./../../config.json").botFooter;
+const botPfp = require("./../../config.json").botPfp;
 
 module.exports = {
   name: "User Info",
+  description: "Get info about a user",
   type: "USER",
   /**
    *
@@ -14,47 +15,26 @@ module.exports = {
   run: async (client, interaction, args) => {
     const target = await interaction.guild.members.fetch(interaction.targetId);
 
-    
-
     const embed = new MessageEmbed()
       .setColor(target.roles.cache.size - 1 ? target.displayHexColor : "b9bbbe" )
-      .setAuthor(target.user.tag)
+      .setAuthor({
+        name: `${target.user.tag}`,
+      })
       .setDescription(`${target.user}`)
       .setThumbnail(target.user.avatarURL({ dynamic: true, size: 512 }))
       .addFields(
-        "Member Since:",
-        `<t:${parseInt(target.joinedTimestamp / 1000)}:R>`,
-        true
+        { name: "Member Since:", value: `<t:${parseInt(target.joinedTimestamp / 1000)}:R>`, inline: false },
+        { name: "Discord User Since:", value: `<t:${parseInt(target.user.createdTimestamp / 1000)}:R>`, inline: false },
+        { name: "Roles:", value: target.roles.cache.size - 1 ? target.roles.cache.map((r) => r).join(" ").replace("@everyone", " ") : "No roles", inline: false },
+        { name: "User's ID:", value: `\`${target.user.id}\``, inline: false },
       )
-      .addFields(
-        "Discord User Since:",
-        `<t:${parseInt(target.user.createdTimestamp / 1000)}:R>`,
-        true
-      )
-      .addFields(
-        "Roles:", target.roles.cache.size - 1 ?
-        target.roles.cache
-          .map((r) => r)
-          .join(" ").replace("@everyone", " ") : "No roles"
-          /**/
-      )
-      //.addFields("Custom Status:", `${target.user.presence.game ? target.user.presence.game.name : 'Null'}`, true)
-      //.addFields("Status:", `${target.user.presence.status ? target.user.presence.status.name : 'Null'}`, true)
-      /*.addFields(
-        "Mutual Servers",
-        await client.guilds.cache
-          .filter((u) => u.members.cache.get(interaction.user.id))
-          .map((g) => g.name)
-          .join(", "),
-        true
-      )*/
-      .addFields("User's ID:", `${target.user.id}`, true)
-      .setFooter(
-        // `${botName}`,
-        // `${botPfp}`
-        `${footer}`
-      );
+      .setFooter({
+        text: `${botName}`,
+        iconURL:`${botPfp}`
+      });
 
-    interaction.followUp({ embeds: [embed], ephemeral: true });
+    
+    // await interaction.deferReply({ephemeral: true});
+    interaction.reply({ embeds: [embed], ephemeral: true });
   },
 };

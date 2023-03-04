@@ -1,0 +1,96 @@
+const discordTogether = require("../../client/discordTogether");
+const {
+  CommandInteraction,
+  Client,
+  MessageEmbed,
+  Message,
+  //   MessageActionRow,
+  //   MessageButton,
+} = require("discord.js");
+
+module.exports = {
+  name: "embed create",
+  description: "create an embed",
+  options: [
+    {
+      name: "title",
+      description: "embed title",
+      type: "STRING",
+      required: false,
+    },
+    {
+      name: "description",
+      description: "embed description",
+      type: "STRING",
+      required: false,
+    },
+    {
+      name: "color",
+      description: "embed color",
+      type: "STRING",
+      required: false,
+    },
+    {
+        name: "footer",
+        description: "embed footer",
+        type: "STRING",
+        required: false,
+        },
+    {
+        name: "thumbnail",
+        description: "embed thumbnail",
+        type: "STRING",
+        required: false,
+    },
+    {
+        name: "image",
+        description: "embed image",
+        type: "STRING",
+        required: false,
+    },
+    {
+        name: "author",
+        description: "embed author",
+        type: "STRING",
+        required: false,
+    },
+    {
+        name: "fields",
+        description: "embed fields",
+        type: "STRING",
+        required: false,
+    },
+  ],
+  /**
+   *
+   * @param {Client} client
+   * @param {CommandInteraction} interaction
+   * @param {String[]} args
+   *
+   */
+  run: async (client, interaction, args) => {
+    await interaction.deferReply().catch(() => {});
+    const title = interaction.options.get("title")?.value;
+    const description = interaction.options.get("description")?.value;
+    const color = interaction.options.get("color")?.value;
+    const footer = interaction.options.get("footer")?.value;
+    const thumbnail = interaction.options.get("thumbnail")?.value;
+    const image = interaction.options.get("image")?.value;
+    const author = interaction.options.get("author")?.value;
+    const fields = interaction.options.get("fields")?.value;
+
+
+    const embed = new MessageEmbed()
+        .setTitle(`${title}`)
+        .setDescription(`${description}`)
+        .setColor(`${color}`)
+        .setFooter(`${footer}`)
+        .setThumbnail(`${thumbnail}`)
+        .setImage(`${image}`)
+        .setAuthor(`${author}`)
+        .addFields(`${fields}`)
+    interaction.followUp({ embeds: [embed] });
+    
+    
+  },
+};

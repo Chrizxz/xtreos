@@ -2,73 +2,57 @@ const { glob } = require("glob");
 const mongoose = require("mongoose");
 const { promisify } = require("util");
 const { Client } = require("discord.js");
-const express = require('express');
+const express = require("express");
 const app = express();
 const Discord = require("discord.js");
-const {Player} = require('discord-player');
+const { Player } = require("discord-player");
 const client = require("../server.js");
-//const client = new Discord.Client({ ws: { intents: 32509 }});
-/*const { Client, Intents } = require('discord.js');
-const myIntents = new Intents();
-myIntents.add(
-    Intents.FLAGS.GUILD_PRESENCES, 
-    Intents.FLAGS.GUILD_MEMBERS,
-    Intents.FLAGS.GUILDS,
-    Intents.FLAGS.GUILD_INTEGRATIONS,
-    Intents.FLAGS.GUILD_WEBHOOKS,
-    Intents.FLAGS.GUILD_MESSAGES,
-    Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-    Intents.FLAGS.GUILD_MESSAGE_TYPING
-             );*/
-
-//const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_INTEGRATIONS", /*"GUILD_MEMBERS", "GUILD_PRESENCES",*/ "GUILD_WEBHOOKS", "GUILD_MESSAGE_REACTIONS", "GUILD_MESSAGE_TYPING"] }); //new Client({ intents: myIntents });
-
-/*const bot = new Discord.Client({
-    intents: 32767,
-});
-*/
+require("dotenv").config();
+const colors = require("colors");
 const globPromise = promisify(glob);
 
 /**
  * @param {Client} client
  */
-module.exports = async(client) => {
-    // Commands
-    const commandFiles = await globPromise(`${process.cwd()}/slashCommands/**/*.js`);
-    
-    commandFiles.map((value) => {
-        const file = require(value);
-        const splitted = value.split("/");
-        const directory = splitted[splitted.length - 2];
+module.exports = async (client) => {
+  // Commands
+  const commandFiles = await globPromise(
+    `${process.cwd()}/slashCommands/**/*.js`
+  );
 
-        if (file.name) {
-            const properties = { directory, ...file };
-            client.commands.set(file.name, properties);
-        }
-    });
+  commandFiles.map((value) => {
+    const file = require(value);
+    const splitted = value.split("/");
+    const directory = splitted[splitted.length - 2];
 
-    // Events
-    const eventFiles = await globPromise(`${process.cwd()}/events/*.js`);
-    eventFiles.map((value) => require(value));
+    if (file.name) {
+      const properties = { directory, ...file };
+      client.commands.set(file.name, properties);
+    }
+  });
 
-    // Slash Commands
-    const slashCommands = await globPromise(
-        `${process.cwd()}/slashCommands/*/*.js`
-    );
+  // Events
+  const eventFiles = await globPromise(`${process.cwd()}/events/*.js`);
+  eventFiles.map((value) => require(value));
 
-    const arrayOfSlashCommands = [];
-    slashCommands.map((value) => {
-        const file = require(value);
-        if (!file?.name) return;
-        client.slashCommands.set(file.name, file);
+  // Slash Commands
+  const slashCommands = await globPromise(
+    `${process.cwd()}/slashCommands/*/*.js`
+  );
 
-        if (["MESSAGE", "USER"].includes(file.type)) delete file.description;
-        if (file.permissions) file.defaultPermissions = false;
-        arrayOfSlashCommands.push(file);
-    });
-    client.on("ready", async() => {
-        // Register for a single guild
-      /*  const guild = client.guilds.cache.get("879734848946847774");
+  const arrayOfSlashCommands = [];
+  slashCommands.map((value) => {
+    const file = require(value);
+    if (!file?.name) return;
+    client.slashCommands.set(file.name, file);
+
+    if (["MESSAGE", "USER"].includes(file.type)) delete file.description;
+    if (file.permissions) file.defaultPermissions = false;
+    arrayOfSlashCommands.push(file);
+  });
+  client.on("ready", async () => {
+    // Register for a single guild
+    /*  const guild = client.guilds.cache.get("879734848946847774");
         await guild.commands.set(arrayOfSlashCommands).then((cmd) => {
           const getRoles = (commandName) => {
             const permissions = arrayOfSlashCommands.find(
@@ -112,41 +96,79 @@ module.exports = async(client) => {
         
         */
 
+    // Register for all the guilds the client is in
+    await client.application.commands.set(arrayOfSlashCommands);
+  });
 
-        // Register for all the guilds the client is in
-        await client.application.commands.set(arrayOfSlashCommands);
-    });
+  // mongoose
 
-    // mongoose
-    // const { mongooseConnectionString } = require('../config.json')
-    // if (!mongooseConnectionString) return;
+  mongoose.connect(process.env.DB_URI, {
+    dbName: "xtreos",
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  const db = mongoose.connection;
+  db.on("error", (error) => console.error(error));
+  db.once("open", () =>
+    console.log("Connected to Database: ".cyan + `${db.name}`.cyan.bold)
+  );
 
-    // if (process.env.NODE_ENV !== 'production') {
-    //   require("dotenv").config();
-    //   }
+  //----------------------------------------------
 
-    // mongoose.connect(process.env.DB_URI, { useNewUrlParser: true, useUnifiedTopology: true, });
-    // const db = mongoose.connection;
-    // db.on('error', (error) => console.error(error));
-    // db.once('open', () => console.log('Connected to Database'));
+  
+  
+  const Schema = require("../schemas/MemberCount");
 
-    // mongoose.connect(mongooseConnectionString, { ssl: false }).then(() => console.log('Connected to mongodb'));
-    // mongoose.set('strictQuery', false);
-};
+  client.on("ready", () => {
+    setInterval(async () => {
+      const data = await Schema.find();
+      for (const guildData of data) {
+        const guild = await client.guilds.fetch(guildData.guildID);
+        const channel = guild.channels.cache.get(guildData.channelID);
+        if (channel && channel.type === "GUILD_VOICE") {
+          const memberCount = guild.members.cache.filter(
+            (member) => !member.user.bot
+          ).size;
+          channel.setName(`Members: ${memberCount}`);
+        }
+      }
+    }, 300000); // 5 minutes
+  });
 
-// const player = require("../client/player.js");
+  //     const { memberChannelID } = require('../slashCommands/commands/memberCount.js');
 
-// player.on('queueEnd', queue => {
-//   queue.metadata.send('✅ | Queue finished');
-// });
+  //     client.on("guildMemberAdd", (member) => {
+  //       const memberCountChannel = member.guild.channels.cache.find(
+  //         (ch) => ch.name === "member-count"
+  //       );
+  //       if (memberCountChannel) {
+  //         memberCountChannel.setName(`Member Count: ${member.guild.memberCount}`);
+  //       }
+  //     });
 
-// player.on('channelEmpty', queue => {
-//   queue.metadata.send('❌ | Nobody is in the voice channel, leaving...');
-// });
+  //     client.on("guildMemberRemove", (member) => {
+  //       const memberCountChannel = member.guild.channels.cache.find(
+  //         (ch) => ch.name === "member-count"
+  //       );
+  //       if (memberChannelID) {
+  //         memberChannelID.setName(`Member Count: ${member.guild.memberCount}`);
+  //       }
+  //     });
+  // };
 
-//client.on("error", () => { client.login(token) });
+  // const player = require("../client/player.js");
 
-/*
+  // player.on('queueEnd', queue => {
+  //   queue.metadata.send('✅ | Queue finished');
+  // });
+
+  // player.on('channelEmpty', queue => {
+  //   queue.metadata.send('❌ | Nobody is in the voice channel, leaving...');
+  // });
+
+  //client.on("error", () => { client.login(token) });
+
+  /*
 
 //const player = new Player(client);
 const player = require("../../client/player");
@@ -175,7 +197,7 @@ player.on('error', (queue, error) => {
     queue.metadata.send('❌ | Nobody is in the voice channel, leaving...');
   });
 */
-/*
+  /*
   client.on('voiceStateUpdate', (oldState, newState) => {
 
     // if nobody left the channel in question, return.
@@ -193,8 +215,8 @@ player.on('error', (queue, error) => {
 
   const db = require('quick.db')
 */
-//under if(message.author.bot)
-/*
+  //under if(message.author.bot)
+  /*
 client.on('message', async (message) =>{
 if(db.has(`afk-${message.author.id}+${message.guild.id}`)) {
         const info = db.get(`afk-${message.author.id}+${message.guild.id}`)
@@ -207,5 +229,5 @@ if(db.has(`afk-${message.author.id}+${message.guild.id}`)) {
             message.channel.send(message.mentions.members.first().user.tag + ":" + db.get(`afk-${message.mentions.members.first().id}+${message.guild.id}`))
         }else return;
     }else;
-  });
-  */
+  });*/
+};

@@ -1,23 +1,22 @@
-const { Client, Collection } = require("discord.js");
+const { Client, Collection, IntentsBitField } = require("discord.js");
 const Discord = require("discord.js");
 const handler = require("./handler");
 require('dotenv').config()
 
-/*
-const client = new Client({
-    intents: 32767,
-});*/
 const client = new Discord.Client({
   intents: [
-    "GUILDS",
-    "GUILD_MESSAGES",
-    "GUILD_INTEGRATIONS",
-    /*"GUILD_MEMBERS", 
-    "GUILD_PRESENCES",*/ 
-    "GUILD_WEBHOOKS",
-    "GUILD_MESSAGE_REACTIONS",
-    "GUILD_MESSAGE_TYPING",
-    "GUILD_VOICE_STATES",
+    IntentsBitField.Flags.Guilds,
+    IntentsBitField.Flags.GuildMessages,
+    IntentsBitField.Flags.GuildMessageReactions,
+    IntentsBitField.Flags.GuildMessageTyping,
+    IntentsBitField.Flags.GuildVoiceStates,
+    IntentsBitField.Flags.GuildMembers,
+    IntentsBitField.Flags.GuildWebhooks,
+    IntentsBitField.Flags.GuildIntegrations,
+    // IntentsBitField.Flags.GuildPresences,
+    // IntentsBitField.Flags.DirectMessages,
+    // IntentsBitField.Flags.DirectMessageReactions,
+    // IntentsBitField.Flags.DirectMessageTyping,
   ],
 });
 module.exports = client;

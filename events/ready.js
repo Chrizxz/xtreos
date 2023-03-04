@@ -1,8 +1,12 @@
 const bot = require("../server");
-//const config = require("../config.json");
+const colors = require('colors');
+
 
 bot.on("ready", () =>
-  console.log(`${bot.user.tag} is up and ready to go! Also I like cookies :)`)
+  console.log(
+    `${bot.user.tag} is up and ready to go! `.blue + 
+    `Also I like cookies :)`.blue
+  )
 );
 
 bot.on("ready", () => {

@@ -79,7 +79,7 @@ module.exports = {
           )
       ),
     ];
-
+    await interaction.deferReply().catch(() => {});
     const initialMessage = await interaction.followUp({
       embeds: [embed],
       components: components(false),

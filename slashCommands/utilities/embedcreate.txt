@@ -2,7 +2,7 @@ const discordTogether = require("../../client/discordTogether");
 const {
   CommandInteraction,
   Client,
-  MessageEmbed,
+  EmbedBuilder,
   Message,
   //   MessageActionRow,
   //   MessageButton,
@@ -80,7 +80,7 @@ module.exports = {
     const fields = interaction.options.get("fields")?.value;
 
 
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
         .setTitle(`${title}`)
         .setDescription(`${description}`)
         .setColor(`${color}`)

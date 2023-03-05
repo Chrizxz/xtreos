@@ -1,4 +1,10 @@
-const { CommandInteraction, Client } = require("discord.js");
+const { 
+  CommandInteraction, 
+  Client,
+  ApplicationCommandType,
+  ApplicationCommandOptionType,
+  PermissionsBitField 
+ } = require("discord.js");
 const owners = ["273538684526264320", "242385234992037888"];
 
 module.exports = {
@@ -8,13 +14,13 @@ module.exports = {
     {
       name: "user",
       description: "member to superban",
-      type: "USER",
+      type: ApplicationCommandOptionType.User,
       required: true,
     },
     {
       name: "reason",
       description: "reason for the superban",
-      type: "STRING",
+      type: ApplicationCommandOptionType.String,
       required: false,
     },
   ],

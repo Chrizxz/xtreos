@@ -28,23 +28,33 @@ client.on("interactionCreate", async (interaction) => {
     interaction.member = interaction.guild.members.cache.get(
       interaction.user.id
     );
-
-    if (!interaction.member.permissions.has(cmd.userPermissions || []))
-      return interaction.followUp({
-        content: "Your lacking permissions to use this command",
-        ephemeral: true,
-      });
-      if (!interaction.guild.me.permissions.has(cmd.botPermissions || []))
-      return interaction.followUp({
-        content: "I lack permissions to use this command",
-        ephemeral: true,
-      });
+    
+    if (interaction.isCommand()) {
+      // for CommandInteraction
+      if (!interaction.guild) return;
+      if (!interaction.member) {
+        interaction.reply('Could not fetch member data. Make sure the bot has the necessary permissions.');
+        return;
+      }
+    } else {
+      if (!interaction.member || !interaction.member.permissions.has(cmd.userPermissions || []))
+        return interaction.followUp({
+          content: "Your lacking permissions to use this command",
+          ephemeral: true,
+        });
+        if (!interaction.guild.me.permissions.has(cmd.botPermissions || []))
+        return interaction.followUp({
+          content: "I lack permissions to use this command",
+          ephemeral: true,
+        });
+    }
+    
 
     cmd.run(client, interaction, args);
   }
 
   // Context Menu Handling
-  if (interaction.isContextMenu()) {
+  if (interaction.isContextMenuCommand()) {
 
     // await interaction.deferReply({ephemeral: true}); // THIS IS DEFERREPLY FOR CONTEXT MENU
 

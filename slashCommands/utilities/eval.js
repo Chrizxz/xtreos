@@ -3,6 +3,12 @@ const owners = [
   "273538684526264320",
   "242385234992037888",
 ];
+const { 
+  Client, 
+  CommandInteraction, 
+  EmbedBuilder, 
+  ApplicationCommandOptionType
+ } = require("discord.js");
 
 module.exports = {
     name: "eval",
@@ -11,7 +17,7 @@ module.exports = {
         {
             name: "code",
             description: "code for eval command",
-            type: "STRING",
+            type: ApplicationCommandOptionType.String,
             required: true,
         }
     ],

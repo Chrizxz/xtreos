@@ -10,7 +10,7 @@ const client = require("../server.js");
 require("dotenv").config();
 const colors = require("colors");
 const globPromise = promisify(glob);
-
+const { ChannelType } = require("discord.js");
 /**
  * @param {Client} client
  */
@@ -125,7 +125,7 @@ module.exports = async (client) => {
       for (const guildData of data) {
         const guild = await client.guilds.fetch(guildData.guildID);
         const channel = guild.channels.cache.get(guildData.channelID);
-        if (channel && channel.type === "GUILD_VOICE") {
+        if (channel && channel.type === ChannelType.GuildVoice) {
           const memberCount = guild.members.cache.filter(
             (member) => !member.user.bot
           ).size;

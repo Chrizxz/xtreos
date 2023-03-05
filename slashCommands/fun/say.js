@@ -4,6 +4,9 @@ const {
   //   Message,
   //   MessageActionRow,
   //   MessageButton,
+    ApplicationCommandType,
+    ApplicationCommandOptionType,
+    ChannelType,
   } = require("discord.js");
   
   module.exports = {
@@ -13,15 +16,15 @@ const {
       {
         name: "message",
         description: "activity you want to play",
-        type: "STRING",
+        type: ApplicationCommandOptionType.String,
         required: true,
         maxLength: 2000,
       },
       {
           name: "channel",
           description: "channel to say your message",
-          type: "CHANNEL",
-          channelTypes: ["GUILD_TEXT"],
+          type: ApplicationCommandOptionType.Channel,
+          channelTypes: [ChannelType.GuildText],
           required: false,
       }
     ],

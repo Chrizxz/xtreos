@@ -1,11 +1,17 @@
-const { Client, ContextMenuInteraction, MessageEmbed } = require("discord.js");
+const { 
+  Client, 
+  ContextMenuInteraction, 
+  EmbedBuilder,
+  ApplicationCommandType,
+  // ApplicationCommandOptionType 
+ } = require("discord.js");
 const botName = require("./../../config.json").botName;
 const botPfp = require("./../../config.json").botPfp;
 
 module.exports = {
   name: "User Info",
-  description: "Get info about a user",
-  type: "USER",
+  // description: "Get info about a user",
+  type: ApplicationCommandType.User,
   /**
    *
    * @param {Client} client
@@ -15,7 +21,7 @@ module.exports = {
   run: async (client, interaction, args) => {
     const target = await interaction.guild.members.fetch(interaction.targetId);
 
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setColor(target.roles.cache.size - 1 ? target.displayHexColor : "b9bbbe" )
       .setAuthor({
         name: `${target.user.tag}`,

@@ -1,11 +1,17 @@
-const { Client, CommandInteraction, MessageEmbed } = require("discord.js");
+const { 
+  Client, 
+  CommandInteraction, 
+  EmbedBuilder,
+  ApplicationCommandType, 
+  // ApplicationCommandOptionType
+ } = require("discord.js");
 const botName = require("./../../config.json").botName;
 const botPfp = require("./../../config.json").botPfp;
 
 module.exports = {
   name: "ping",
   description: "returns websocket ping",
-  type: "CHAT_INPUT",
+  type: ApplicationCommandType.ChatInput,
   /**
    *
    * @param {Client} client
@@ -16,7 +22,7 @@ module.exports = {
     await interaction.deferReply().catch(() => {});
     interaction.followUp("Pinging...");
     const reply = await interaction.fetchReply();
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setTitle("Pong!")
       .setColor("FFFFFF")
       .addFields(

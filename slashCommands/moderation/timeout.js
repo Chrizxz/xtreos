@@ -1,27 +1,32 @@
 //const { Command } = require("reconlx");
+const { 
+  ApplicationCommandOptionType, 
+  ApplicationCommandType,
+  PermissionsBitField 
+ } = require("discord.js");
 const ms = require("ms");
 module.exports = {
   name: "timeout",
   description: "timeout a member",
-  userPermissions: "MODERATE_MEMBERS",
-  botPermissions: "MODERATE_MEMBERS",
+  userPermissions: PermissionsBitField.Flags.ModerateMembers,
+  botPermissions: PermissionsBitField.Flags.ModerateMembers,
   options: [
     {
       name: "user",
       description: "member to perform the timeout",
-      type: "USER",
+      type: ApplicationCommandOptionType.User,
       required: true,
     },
     {
       name: "length",
       description: "Example: 1 minute",
-      type: "STRING",
+      type: ApplicationCommandOptionType.String,
       required: true,
     },
     {
       name: "reason",
       description: "reason for the timeout",
-      type: "STRING",
+      type: ApplicationCommandOptionType.String,
       required: true,
     },
   ],

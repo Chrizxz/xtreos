@@ -4,15 +4,17 @@ const botPfp = require("./../../config.json").botPfp;
 const {
   CommandInteraction,
   Client,
-  MessageEmbed,
+  EmbedBuilder,
   MessageActionRow,
   MessageSelectMenu,
+  ApplicationCommandType, 
+  ApplicationCommandOptionType
 } = require("discord.js");
 
 module.exports = {
   name: "help",
   description: "lists all the commands",
-  type: "CHAT_INPUT",
+  type: ApplicationCommandType.ChatInput,
   /**
    *
    * @param {Client} client
@@ -52,7 +54,7 @@ module.exports = {
     });
 
     
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setColor("FFFFFF")
       .setTitle(`${botName} Commands`)
       .setDescription("Choose a category")
@@ -100,7 +102,7 @@ module.exports = {
         (x) => x.directory.toLowerCase() === directory
       );
 
-      const categoryEmbed = new MessageEmbed()
+      const categoryEmbed = new EmbedBuilder()
         .setTitle(`${directory.toUpperCase()}`)
         .setColor("FFFFFF")
         .setFooter({

@@ -4,6 +4,9 @@ const {
 //   Message,
 //   MessageActionRow,
 //   MessageButton,
+  ApplicationCommandType, 
+  ApplicationCommandOptionType,
+  ChannelType,
 } = require("discord.js");
 const Schema = require("../../schemas/MemberCount");
 
@@ -14,8 +17,8 @@ module.exports = {
     {
       name: "channel",
       description: "channel to start the activity",
-      type: "CHANNEL",
-      channelTypes: ["GUILD_VOICE"],
+      type: ApplicationCommandOptionType.Channel,
+      channelTypes: [ChannelType.GuildVoice],
       required: false,
     },
   ],
@@ -30,10 +33,11 @@ module.exports = {
     //const [channelID] = args[1];
     const channelID = interaction.options.getChannel("channel")?.id;
     const channel = interaction.options.getChannel("channel");
+    console.log(interaction.options);
     //const channel = interaction.guild.channels.cache.get(channelID);
     // const name = interaction.options.get("activity").name;
     /*
-    if (channel.type !== "GUILD_VOICE")
+    if (channel.type !== ChannelTypes.GuildVoice)
       return interaction.followUp({
         content: "Please choose a voice channel!",
       });*/
@@ -43,7 +47,7 @@ module.exports = {
     const memberCount = guild.members.cache.filter(member => !member.user.bot).size; //guild.memberCount;
     if (!channelID) {
         await guild.channels.create(`Members: ${memberCount}`, {
-            type: 'GUILD_VOICE',
+            type: ChannelType.GuildVoice,
             // parent: interaction.channel.parent, // optional, specify the parent category channel
             permissionOverwrites: [
               {
